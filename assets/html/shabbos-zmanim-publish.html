@@ -113,7 +113,6 @@
             <div class="row">
                 <div class="column">
                     <h2>ליל שבת</h2>
-                    <p class="note">דף יומי: <span id="day-yomi-friday"></span></p>
                     <p class="withcomment">הדלקת נרות: <span id="candle-light"></span></p>
                     <small>&rlm;40 דקות לפני השקיעה</small>
                     <p>מנחה וקבלת שבת: <span id="mincha"></span></p>
@@ -124,10 +123,10 @@
                     <p>שוכן עד: 9:00</p>
                     <small>סוזק"ש: <span id="sofZmanShma"></span></small>
                     <p class="note">קידוש לאחר התפילה</p>
-                    <p class="note">דף יומי: 17:30</p>
-                    <p class="note">אבות ובנים: 18:00</p>
-                    <p>מנחה: 18:30</p>
+                    <p class="note">דף יומי: <span id="dafYomiShabbat"></span></p>
+                    <p>מנחה: <span id="shabbatMincha"></span></p>
                     <p>מעריב וצאת שבת: <span id="maariv"></span></p>
+                    <p class="note">אבות ובנים: 18:45</p>
                 </div>
             </div>
             <div class="row">
@@ -169,7 +168,13 @@
                         let mincha = new Date(element.date);
                         mincha.setMinutes(mincha.getMinutes() + 20);
 
-                        document.getElementById("mincha").innerHTML = mincha.toLocaleTimeString([], { hourCycle: 'h23', hour: '2-digit', minute: '2-digit' });
+                        let shabbatMincha = new Date(element.date);
+                        document.getElementById("shabbatMincha").innerHTML = shabbatMincha.toLocaleTimeString([], { hourCycle: 'h23', hour: '2-digit', minute: '2-digit' });
+
+                        let dafYomiShabbat = new Date(element.date);
+                        dafYomiShabbat.setMinutes(dafYomiShabbat.getMinutes() - 30);
+                        document.getElementById("dafYomiShabbat").innerHTML = dafYomiShabbat.toLocaleTimeString([], { hourCycle: 'h23', hour: '2-digit', minute: '2-digit' });
+
                         let dafYomiFriday = new Date(element.date);
                         dafYomiFriday.setMinutes(dafYomiFriday.getMinutes() - 5);
                         document.getElementById("day-yomi-friday").innerHTML = dafYomiFriday.toLocaleTimeString([], { hourCycle: 'h23', hour: '2-digit', minute: '2-digit' });
