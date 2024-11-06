@@ -167,6 +167,7 @@
                         // add 20 minutes to candle lighting time
                         let mincha = new Date(element.date);
                         mincha.setMinutes(mincha.getMinutes() + 20);
+                        document.getElementById("mincha").innerHTML = mincha.toLocaleTimeString([], { hourCycle: 'h23', hour: '2-digit', minute: '2-digit' });
 
                         let shabbatMincha = new Date(element.date);
                         document.getElementById("shabbatMincha").innerHTML = shabbatMincha.toLocaleTimeString([], { hourCycle: 'h23', hour: '2-digit', minute: '2-digit' });
@@ -177,7 +178,7 @@
 
                         let dafYomiFriday = new Date(element.date);
                         dafYomiFriday.setMinutes(dafYomiFriday.getMinutes() - 5);
-                        document.getElementById("day-yomi-friday").innerHTML = dafYomiFriday.toLocaleTimeString([], { hourCycle: 'h23', hour: '2-digit', minute: '2-digit' });
+                        // document.getElementById("day-yomi-friday").innerHTML = dafYomiFriday.toLocaleTimeString([], { hourCycle: 'h23', hour: '2-digit', minute: '2-digit' });
                         break;
                     case "havdalah":
                         document.getElementById("maariv").innerHTML = new Date(element.date).toLocaleTimeString([], { hourCycle: 'h23', hour: '2-digit', minute: '2-digit' });
