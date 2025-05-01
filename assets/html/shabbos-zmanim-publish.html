@@ -123,15 +123,17 @@
                     <p>שוכן עד: 9:00</p>
                     <small>סוזק"ש: <span id="sofZmanShma"></span></small>
                     <p class="note">קידוש לאחר התפילה</p>
-                    <p class="note">דף יומי: <span id="dafYomiShabbat"></span></p>
-                    <p>מנחה: <span id="shabbatMincha"></span></p>
+                    <p class="note">דף יומי: 17:30</p>
+                    <!-- <p class="note">דף יומי: <span id="dafYomiShabbat"></span></p> -->
+                    <!-- <p>מנחה: <span id="shabbatMincha"></span></p> -->
+                    <p class="note">אבות ובנים: 18:00</p>
+                    <p>מנחה: 18:30</p>
                     <p>מעריב וצאת שבת: <span id="maariv"></span></p>
-                    <p class="note">אבות ובנים: 18:45</p>
                 </div>
             </div>
             <div class="row">
                     <div class="framed">
-                        <p style="font-size: 40px;">התפילות מתקיימות באופן זמני<br>בחגואל 19 דירה 4<br>כניסה מימין לבניין</p>
+                        <p style="font-size: 40px;">התפילות מתקיימות באופן זמני<br>בחגואל 19<br>כניסה מימין לבניין</p>
                     </div>
             </div>
             <h1>שבת שלום לכולם</h1>
@@ -163,6 +165,7 @@
                         document.getElementById("parasha").innerHTML = element.hebrew;
                         break;
                     case "candles":
+                        element.date.setMinutes(element.date.getMinutes() + 3);
                         document.getElementById("candle-light").innerHTML = new Date(element.date).toLocaleTimeString([], { hourCycle: 'h23', hour: '2-digit', minute: '2-digit' });
                         // add 20 minutes to candle lighting time
                         let mincha = new Date(element.date);
