@@ -174,11 +174,11 @@
                         document.getElementById("mincha").innerHTML = mincha.toLocaleTimeString([], { hourCycle: 'h23', hour: '2-digit', minute: '2-digit' });
 
                         let shabbatMincha = new Date(candles);
-                        document.getElementById("shabbatMincha").innerHTML = shabbatMincha.toLocaleTimeString([], { hourCycle: 'h23', hour: '2-digit', minute: '2-digit' });
+                        // document.getElementById("shabbatMincha").innerHTML = shabbatMincha.toLocaleTimeString([], { hourCycle: 'h23', hour: '2-digit', minute: '2-digit' });
 
                         let dafYomiShabbat = new Date(candles);
                         dafYomiShabbat.setMinutes(dafYomiShabbat.getMinutes() - 30);
-                        document.getElementById("dafYomiShabbat").innerHTML = dafYomiShabbat.toLocaleTimeString([], { hourCycle: 'h23', hour: '2-digit', minute: '2-digit' });
+                        // document.getElementById("dafYomiShabbat").innerHTML = dafYomiShabbat.toLocaleTimeString([], { hourCycle: 'h23', hour: '2-digit', minute: '2-digit' });
 
                         let dafYomiFriday = new Date(candles);
                         dafYomiFriday.setMinutes(dafYomiFriday.getMinutes() - 5);
