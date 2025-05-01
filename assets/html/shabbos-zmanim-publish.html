@@ -165,21 +165,22 @@
                         document.getElementById("parasha").innerHTML = element.hebrew;
                         break;
                     case "candles":
-                        element.date.setMinutes(element.date.getMinutes() + 3);
-                        document.getElementById("candle-light").innerHTML = new Date(element.date).toLocaleTimeString([], { hourCycle: 'h23', hour: '2-digit', minute: '2-digit' });
+                        let candles = new Date(element.date);
+                        candles.setMinutes(candles.getMinutes() + 3);
+                        document.getElementById("candle-light").innerHTML = new Date(candles).toLocaleTimeString([], { hourCycle: 'h23', hour: '2-digit', minute: '2-digit' });
                         // add 20 minutes to candle lighting time
-                        let mincha = new Date(element.date);
+                        let mincha = new Date(candles);
                         mincha.setMinutes(mincha.getMinutes() + 20);
                         document.getElementById("mincha").innerHTML = mincha.toLocaleTimeString([], { hourCycle: 'h23', hour: '2-digit', minute: '2-digit' });
 
-                        let shabbatMincha = new Date(element.date);
+                        let shabbatMincha = new Date(candles);
                         document.getElementById("shabbatMincha").innerHTML = shabbatMincha.toLocaleTimeString([], { hourCycle: 'h23', hour: '2-digit', minute: '2-digit' });
 
-                        let dafYomiShabbat = new Date(element.date);
+                        let dafYomiShabbat = new Date(candles);
                         dafYomiShabbat.setMinutes(dafYomiShabbat.getMinutes() - 30);
                         document.getElementById("dafYomiShabbat").innerHTML = dafYomiShabbat.toLocaleTimeString([], { hourCycle: 'h23', hour: '2-digit', minute: '2-digit' });
 
-                        let dafYomiFriday = new Date(element.date);
+                        let dafYomiFriday = new Date(candles);
                         dafYomiFriday.setMinutes(dafYomiFriday.getMinutes() - 5);
                         // document.getElementById("day-yomi-friday").innerHTML = dafYomiFriday.toLocaleTimeString([], { hourCycle: 'h23', hour: '2-digit', minute: '2-digit' });
                         break;
