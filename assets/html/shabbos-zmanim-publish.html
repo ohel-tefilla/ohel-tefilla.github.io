@@ -144,7 +144,7 @@
     <button id="download">Download</button>
     <script>
         const zmanim_url = "https://www.hebcal.com/zmanim?cfg=json&geonameid=295432"
-        const parasha_url = "https://www.hebcal.com/shabbat?cfg=json&b=40&geonameid=295432&M=on"
+        const parasha_url = "https://www.hebcal.com/shabbat?cfg=json&b=40&geonameid=295432&M=on&ue=on"
         async function getZmanim() {
             const response = await fetch(zmanim_url);
 
@@ -166,7 +166,7 @@
                         break;
                     case "candles":
                         let candles = new Date(element.date);
-                        candles.setMinutes(candles.getMinutes() + 3);
+                        // candles.setMinutes(candles.getMinutes() + 3);
                         document.getElementById("candle-light").innerHTML = new Date(candles).toLocaleTimeString([], { hourCycle: 'h23', hour: '2-digit', minute: '2-digit' });
                         // add 20 minutes to candle lighting time
                         let mincha = new Date(candles);
