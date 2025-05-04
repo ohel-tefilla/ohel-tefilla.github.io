@@ -23,15 +23,19 @@
     </style>
     <div id="zmanim" style="text-align: center;">
         <div id="timesheet">
-            <h1 id="parasha"></h1>
-            <h2>ליל שבת</h2>
-            <p class="withcomment">הדלקת נרות: <span id="candle-light"></span></p>
-            <small>&rlm;40 דקות לפני השקיעה</small>
+            <h2 id="parasha"></h2>
+            <h3>ליל שבת</h3>
+            <p class="withcomment">הדלקת נרות: <span id="candle-light"></span>
+                </br>
+                <small>&rlm;40 דקות לפני השקיעה</small>
+            </p>
             <p>מנחה וקבלת שבת: <span id="mincha"></span></p>
-            <h2>יום שבת</h2>
+            <h3>יום שבת</h3>
             <p>שחרית: 8:40</p>
-            <p>שוכן עד: 9:00</p>
-            <small>סוזק"ש: <span id="sofZmanShma"></span></small>
+            <p>שוכן עד: 9:00
+                </br>
+                <small>סוזק"ש: <span id="sofZmanShma"></span></small>
+            </p>
             <p class="note">קידוש לאחר התפילה</p>
             <p class="note">דף יומי: 17:30</p>
             <!-- <p class="note">דף יומי: <span id="dafYomiShabbat"></span></p> -->
@@ -50,7 +54,7 @@
 
             // Parsing it to JSON format
             const data = await response.json();
-            console.log(data.results);
+            document.getElementById("sofZmanShma").innerHTML = new Date(data.times.sofZmanShma).toLocaleTimeString([], { hourCycle: 'h23', hour: '2-digit', minute: '2-digit' });
         }
 
         async function getParasha() {
