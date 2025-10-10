@@ -109,7 +109,7 @@
     </style>
     <div id="zmanim" style="text-align: center;" contenteditable>
         <div id="timesheet">
-            <h1 id="parasha"></h1>
+            <h1 id="parasha">שבת</h1>
             <div class="row">
                 <div class="column">
                     <h2>ליל שבת</h2>
@@ -162,7 +162,9 @@
             data.items.forEach(element => {
                 switch (element.category) {
                     case "parashat":
-                        document.getElementById("parasha").innerHTML = element.hebrew;
+                        if (element.hebrew != "") {
+                          document.getElementById("parasha").innerHTML = element.hebrew;
+                        }
                         break;
                     case "candles":
                         let candles = new Date(element.date);
