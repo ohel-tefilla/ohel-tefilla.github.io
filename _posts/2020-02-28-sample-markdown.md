@@ -6,6 +6,8 @@ gh-repo: daattali/beautiful-jekyll
 gh-badge: [star, fork, follow]
 tags: [test]
 comments: true
+mathjax: true
+author: Bill Smith
 ---
 
 {: .box-success}
@@ -25,6 +27,9 @@ Here's a table:
 | Ten | Eleven | Nine |
 | Seven | Eight | Six |
 | Two | Three | One |
+
+You can use [MathJax](https://www.mathjax.org/) to write LaTeX expressions. For example:
+When \\(a \ne 0\\), there are two solutions to \\(ax^2 + bx + c = 0\\) and they are $$x = {-b \pm \sqrt{b^2-4ac} \over 2a}.$$
 
 How about a yummy crepe?
 
@@ -88,3 +93,8 @@ When hosting a *project site* on GitHub Pages (for example, `https://USERNAME.gi
 If the above image is broken, then you'll need to follow the instructions [in the FAQ](https://beautifuljekyll.com/faq/#links-in-project-page). Here is proof that it can be fixed:
 
 ![Crepe]({{ '/assets/img/crepe.jpg' | relative_url }})
+
+<details markdown="1">
+<summary>Click here!</summary>
+Here you can see an **expandable** section
+</details>
