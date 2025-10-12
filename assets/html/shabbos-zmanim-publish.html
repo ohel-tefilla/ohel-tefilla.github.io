@@ -58,7 +58,7 @@
             margin-top: 5px;
         }
 
-        button {
+        #download {
             background-color: #7e97b8;
             /* Green */
             border: none;
@@ -67,7 +67,7 @@
             margin-top: 20px;
             text-align: center;
             text-decoration: none;
-            display: inline-block;
+            display: none;
             font-size: 16px;
             border-radius: 4%;
         }
@@ -123,18 +123,18 @@
                     <p>שוכן עד: 9:00</p>
                     <small>סוזק"ש: <span id="sofZmanShma"></span></small>
                     <p class="note">קידוש לאחר התפילה</p>
-                    <p class="note">דף יומי: 17:30</p>
-                    <!-- <p class="note">דף יומי: <span id="dafYomiShabbat"></span></p> -->
-                    <!-- <p>מנחה: <span id="shabbatMincha"></span></p> -->
-                    <p class="note">אבות ובנים: 18:00</p>
-                    <p>מנחה: 18:30</p>
+                    <!-- <p class="note">דף יומי: 17:30</p> -->
+                    <p class="note">דף יומי: <span id="dafYomiShabbat"></span></p>
+                    <p class="note">אבות ובנים: <span id="avotUbanim"></span></p>
+                    <p>מנחה: <span id="shabbatMincha"></span></p>
+                    <!-- <p>מנחה: 18:30</p> -->
                     <p>מעריב וצאת שבת: <span id="maariv"></span></p>
                 </div>
             </div>
             <div class="row">
-                    <div class="framed">
-                        <p style="font-size: 40px;">התפילות מתקיימות באופן זמני<br>בחגואל 19<br>כניסה מימין לבניין</p>
-                    </div>
+                <div class="framed">
+                    <p style="font-size: 40px;">התפילות מתקיימות באופן זמני<br>בחגואל 19<br>כניסה מימין לבניין</p>
+                </div>
             </div>
             <h1>שבת שלום לכולם</h1>
 
@@ -142,97 +142,7 @@
 
     </div>
     <button id="download">Download</button>
-    <script>
-        const zmanim_url = "https://www.hebcal.com/zmanim?cfg=json&geonameid=295432"
-        const parasha_url = "https://www.hebcal.com/shabbat?cfg=json&b=40&geonameid=295432&M=on&ue=on"
-        async function getZmanim() {
-            const response = await fetch(zmanim_url);
-
-            // Parsing it to JSON format
-            const data = await response.json();
-            document.getElementById("sofZmanShma").innerHTML = new Date(data.times.sofZmanShma).toLocaleTimeString([], { hourCycle: 'h23', hour: '2-digit', minute: '2-digit' });
-        }
-
-        async function getParasha() {
-            const response = await fetch(parasha_url);
-
-            // Parsing it to JSON format
-            const data = await response.json();
-
-            data.items.forEach(element => {
-                switch (element.category) {
-                    case "parashat":
-                        if (element.hebrew != "") {
-                          document.getElementById("parasha").innerHTML = element.hebrew;
-                        }
-                        break;
-                    case "candles":
-                        let candles = new Date(element.date);
-                        // candles.setMinutes(candles.getMinutes() + 3);
-                        document.getElementById("candle-light").innerHTML = new Date(candles).toLocaleTimeString([], { hourCycle: 'h23', hour: '2-digit', minute: '2-digit' });
-                        // add 20 minutes to candle lighting time
-                        let mincha = new Date(candles);
-                        mincha.setMinutes(mincha.getMinutes() + 20);
-                        document.getElementById("mincha").innerHTML = mincha.toLocaleTimeString([], { hourCycle: 'h23', hour: '2-digit', minute: '2-digit' });
-
-                        let shabbatMincha = new Date(candles);
-                        // document.getElementById("shabbatMincha").innerHTML = shabbatMincha.toLocaleTimeString([], { hourCycle: 'h23', hour: '2-digit', minute: '2-digit' });
-
-                        let dafYomiShabbat = new Date(candles);
-                        dafYomiShabbat.setMinutes(dafYomiShabbat.getMinutes() - 30);
-                        // document.getElementById("dafYomiShabbat").innerHTML = dafYomiShabbat.toLocaleTimeString([], { hourCycle: 'h23', hour: '2-digit', minute: '2-digit' });
-
-                        let dafYomiFriday = new Date(candles);
-                        dafYomiFriday.setMinutes(dafYomiFriday.getMinutes() - 5);
-                        // document.getElementById("day-yomi-friday").innerHTML = dafYomiFriday.toLocaleTimeString([], { hourCycle: 'h23', hour: '2-digit', minute: '2-digit' });
-                        break;
-                    case "havdalah":
-                        document.getElementById("maariv").innerHTML = new Date(element.date).toLocaleTimeString([], { hourCycle: 'h23', hour: '2-digit', minute: '2-digit' });
-                        // add 15 minutes to havdalah time
-                        let maarivB = new Date(element.date);
-                        maarivB.setMinutes(maarivB.getMinutes() + 15);
-                        // document.getElementById("maarivB").innerHTML = maarivB.toLocaleTimeString([], { hourCycle: 'h23', hour: '2-digit', minute: '2-digit' });
-
-                        break;
-                    default:
-                        break;
-                }
-            });
-        }
-
-        getParasha();
-        getZmanim();
-
-        //Creating dynamic link that automatically click
-        function downloadURI(uri, name) {
-            var link = document.createElement("a");
-            link.download = name;
-            link.href = uri;
-            link.click();
-            //after creating link you should delete dynamic link
-            //clearDynamicLink(link); 
-        }
-
-        //Your modified code.
-        function printToFile(div) {
-            html2canvas(div).then((canvas) => {
-                var myImage = canvas.toDataURL("image/png");
-                //create your own dialog with warning before saving file
-                //beforeDownloadReadMessage();
-                //Then download file
-                downloadURI("data:" + myImage, "zmanim.png");
-            }
-            );
-        }
-
-        document.getElementById("download").onclick = function () {
-            var zmanimDiv = document.getElementById("zmanim");
-            printToFile(zmanimDiv);
-        }
-
-
-
-    </script>
+    <script src="/assets/js/update_zmanim.js"></script>
 </body>
 
 </html>
