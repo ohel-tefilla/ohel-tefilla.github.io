@@ -64,7 +64,7 @@ async function getParasha() {
         switch (element.category) {
             case "parashat":
                 if (element.hebrew != "") {
-                    document.getElementById("parasha").innerHTML = element.hebrew;
+                    document.getElementById("parasha").innerHTML = "פרשת " + element.hebrew;
                 }
                 break;
             case "candles":
@@ -106,8 +106,209 @@ async function getParasha() {
     });
 }
 
-getParasha();
-getZmanim();
+// --- New: two methods: CSV-based and API-based ---
+
+/**
+ * Parse a date and time from CSV into a Date object (local time).
+ * dateStr: YYYY-MM-DD, timeStr: HH:MM:SS
+ */
+function parseDateTimeFromCsv(dateStr, timeStr) {
+    const [y, m, d] = dateStr.split('-').map(Number);
+    const [hh, mm, ss] = (timeStr || '00:00:00').split(':').map(Number);
+    return new Date(y, m - 1, d, hh || 0, mm || 0, ss || 0);
+}
+
+/**
+ * Read the local CSV file and return the row for the nearest next date (>= today).
+ * Returns null if none found.
+ */
+async function fetchZmanimFromCsv() {
+    try {
+        const resp = await fetch('/assets/data/zmanim.csv');
+        if (!resp.ok) return null;
+        const text = await resp.text();
+        const lines = text.trim().split('\n');
+        if (lines.length < 2) return null;
+        const header = lines[0].split(',').map(h => h.trim());
+        const rows = lines.slice(1).map(line => line.split(',').map(c => c.trim()));
+
+        // Build objects keyed by header
+        const objs = rows.map(cols => {
+            const obj = {};
+            header.forEach((h, i) => obj[h] = cols[i] || '');
+            return obj;
+        });
+
+        const today = new Date();
+        // Zero out time for comparison by date only (we want next date >= today)
+        const todayDateOnly = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+
+        let chosen = null;
+        for (const r of objs) {
+            if (!r.Date) continue;
+            const [y, mo, d] = r.Date.split('-').map(Number);
+            const rowDate = new Date(y, mo - 1, d);
+            if (rowDate >= todayDateOnly) {
+                chosen = r;
+                break;
+            }
+        }
+
+        if (!chosen) return null;
+
+        // Map CSV columns to data structure
+        const out = {};
+        out.parasha = chosen['Parasha'] || '';
+        out.candleLight = parseDateTimeFromCsv(chosen['Date'], chosen['Candle Lighting (40 min before)']);
+        out.mincha = parseDateTimeFromCsv(chosen['Date'], chosen['Mincha and Kabbalat Shabbat']);
+        out.shacharit = parseDateTimeFromCsv(chosen['Date'], chosen['Shacharit']);
+        out.shochenAd = parseDateTimeFromCsv(chosen['Date'], chosen['Shochen Ad']);
+        out.sofZmanShma = parseDateTimeFromCsv(chosen['Date'], chosen['Sof Zman Shma']);
+        out.dafYomiShabbat = parseDateTimeFromCsv(chosen['Date'], chosen['Daf Yomi']);
+        out.shabbatMincha = parseDateTimeFromCsv(chosen['Date'], chosen['Mincha']);
+        out.shkia = parseDateTimeFromCsv(chosen['Date'], chosen['Shkia']);
+        out.maariv = parseDateTimeFromCsv(chosen['Date'], chosen['Maariv']);
+        out.avotUbanim = parseDateTimeFromCsv(chosen['Date'], chosen['Avot Ubanim']);
+
+        return out;
+    } catch (e) {
+        console.error('Error reading CSV for zmanim:', e);
+        return null;
+    }
+}
+
+/**
+ * Use the original hebcal APIs as a fallback. Split into two functions so they can be used independently.
+ */
+async function fetchZmanimFromApi() {
+    try {
+        // Fetch both zmanim and parasha endpoints in parallel
+        const [zResp, pResp] = await Promise.all([fetch(zmanim_url), fetch(parasha_url)]);
+        if (!zResp.ok) return null;
+        const zData = await zResp.json();
+        let pData = null;
+        if (pResp && pResp.ok) {
+            pData = await pResp.json();
+        }
+
+        const out = {};
+
+        // From hebcal zmanim times
+        if (zData && zData.times) {
+            if (zData.times.sofZmanShma) out.sofZmanShma = new Date(zData.times.sofZmanShma);
+            if (zData.times.sunrise) out.shacharit = new Date(zData.times.sunrise);
+            if (zData.times.sunset) out.shkia = new Date(zData.times.sunset);
+        }
+
+        // From hebcal parasha endpoint
+        if (pData && pData.items) {
+            pData.items.forEach(element => {
+                switch (element.category) {
+                    case 'parashat':
+                        if (element.hebrew) out.parasha = element.hebrew;
+                        break;
+                    case 'candles':
+                        out.candleLight = new Date(element.date);
+                        break;
+                    case 'havdalah':
+                        out.maariv = new Date(element.date);
+                        break;
+                    default:
+                        break;
+                }
+            });
+        }
+
+        // Derive items from candleLight when available
+        if (out.candleLight) {
+            const mincha = new Date(out.candleLight);
+            mincha.setMinutes(mincha.getMinutes() + 20);
+            out.mincha = mincha;
+
+            out.shabbatMincha = roundDownToPreviousQuarterHour(new Date(out.candleLight));
+
+            out.dafYomiShabbat = new Date(out.shabbatMincha);
+            out.dafYomiShabbat.setMinutes(out.dafYomiShabbat.getMinutes() - 60);
+
+            out.avotUbanim = new Date(out.shabbatMincha);
+            out.avotUbanim.setMinutes(out.avotUbanim.getMinutes() - 30);
+        }
+
+        return out;
+    } catch (e) {
+        console.error('API zmanim error', e);
+        return null;
+    }
+}
+
+async function fetchParashaFromApi() {
+    try {
+        const response = await fetch(parasha_url);
+        if (!response.ok) return null;
+        const data = await response.json();
+        return data;
+    } catch (e) {
+        console.error('API parasha error', e);
+        return null;
+    }
+}
+
+/**
+ * Orchestrator: try CSV first, otherwise use API. This fills the DOM elements expected elsewhere in the file.
+ */
+async function loadZmanimAndParasha() {
+    // Try CSV first, then fallback to API. Both fetchers return the same data-shape object.
+    let data = await fetchZmanimFromCsv();
+    if (!data) data = await fetchZmanimFromApi();
+
+    if (data) {
+        fillDomFromZmanim(data);
+    }
+}
+
+// Fill DOM using a single data object (Dates or strings)
+function fillDomFromZmanim(data) {
+    const fmt = (dt) => dt instanceof Date ? dt.toLocaleTimeString([], { hourCycle: 'h23', hour: '2-digit', minute: '2-digit' }) : '';
+
+    if (data.sofZmanShma) {
+        const el = document.getElementById('sofZmanShma');
+        if (el) el.innerHTML = fmt(data.sofZmanShma);
+    }
+
+    if (data.parasha && String(data.parasha).toLowerCase() !== 'none') {
+        const pEl = document.getElementById('parasha');
+        if (pEl) pEl.innerHTML = "פרשת " + data.parasha;
+    }
+
+    if (data.candleLight) {
+        const el = document.getElementById('candle-light');
+        if (el) el.innerHTML = fmt(data.candleLight);
+    }
+
+    if (data.mincha) {
+        const el = document.getElementById('mincha');
+        if (el) el.innerHTML = fmt(data.mincha);
+    }
+
+    if (data.shabbatMincha) {
+        const el = document.getElementById('shabbatMincha');
+        if (el) el.innerHTML = fmt(data.shabbatMincha);
+
+        const dafEl = document.getElementById('dafYomiShabbat');
+        if (data.dafYomiShabbat && dafEl) dafEl.innerHTML = fmt(data.dafYomiShabbat);
+
+        const avotEl = document.getElementById('avotUbanim');
+        if (data.avotUbanim && avotEl) avotEl.innerHTML = fmt(data.avotUbanim);
+    }
+
+    if (data.maariv) {
+        const el = document.getElementById('maariv');
+        if (el) el.innerHTML = fmt(data.maariv);
+    }
+}
+
+// Start using CSV-first approach with API fallback
+loadZmanimAndParasha();
 
 //Creating dynamic link that automatically click
 function downloadURI(uri, name) {
