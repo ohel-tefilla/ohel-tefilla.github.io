@@ -320,16 +320,17 @@ function downloadURI(uri, name) {
     //clearDynamicLink(link); 
 }
 
-//Your modified code.
 function printToFile(div) {
     html2canvas(div).then((canvas) => {
-        var myImage = canvas.toDataURL("image/png");
-        //create your own dialog with warning before saving file
-        //beforeDownloadReadMessage();
-        //Then download file
-        downloadURI("data:" + myImage, "zmanim.png");
-    }
-    );
+        // Convert canvas directly to a binary Blob instead of a text string
+        canvas.toBlob(function(blob) {
+            var blobUrl = URL.createObjectURL(blob);
+            downloadURI(blobUrl, "zmanim.png");
+            
+            // Clean up the temporary URL object from browser memory
+            setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
+        }, "image/png");
+    });
 }
 
 
