@@ -14,17 +14,17 @@ const parasha_url = "https://www.hebcal.com/shabbat?cfg=json&b=40&&latitude=" + 
 function roundToNearestQuarterMinute(dt) {
     // Create a new date to avoid modifying the original
     const rounded = new Date(dt);
-    
+
     // Calculate total seconds from the start of the day
     const startOfDay = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate());
     const secondsSinceMidnight = (dt - startOfDay) / 1000;
-    
+
     // Round to the nearest 15-second interval
     const roundedSeconds = Math.round(secondsSinceMidnight / 15) * 15;
-    
+
     // Create a new date object based on the rounded seconds
     const result = new Date(startOfDay.getTime() + roundedSeconds * 1000);
-    
+
     return result;
 }
 
@@ -36,13 +36,13 @@ function roundToNearestQuarterMinute(dt) {
 function roundDownToPreviousQuarterHour(dt) {
     // Create a new date to avoid modifying the original
     const rounded = new Date(dt);
-    
+
     // Round minutes down to the previous quarter hour
     const minute = Math.floor(dt.getMinutes() / 15) * 15;
-    
+
     // Set the rounded minute and reset seconds and milliseconds
     rounded.setMinutes(minute, 0, 0);
-    
+
     return rounded;
 }
 
@@ -87,7 +87,7 @@ async function getParasha() {
                 let avotUbanim = new Date(shabbatMincha);
                 avotUbanim.setMinutes(avotUbanim.getMinutes() - 30);
                 document.getElementById("avotUbanim").innerHTML = avotUbanim.toLocaleTimeString([], { hourCycle: 'h23', hour: '2-digit', minute: '2-digit' });
-            
+
                 let dafYomiFriday = new Date(candles);
                 dafYomiFriday.setMinutes(dafYomiFriday.getMinutes() - 5);
                 // document.getElementById("day-yomi-friday").innerHTML = dafYomiFriday.toLocaleTimeString([], { hourCycle: 'h23', hour: '2-digit', minute: '2-digit' });
@@ -277,7 +277,7 @@ function fillDomFromZmanim(data) {
 
     if (data.parasha && String(data.parasha).toLowerCase() !== 'none') {
         const pEl = document.getElementById('parasha');
-        if (pEl) pEl.innerHTML = "פרשת " + data.parasha;
+        if (pEl) pEl.innerHTML = data.parasha;
     }
 
     if (data.candleLight) {
@@ -323,10 +323,10 @@ function downloadURI(uri, name) {
 function printToFile(div) {
     html2canvas(div).then((canvas) => {
         // Convert canvas directly to a binary Blob instead of a text string
-        canvas.toBlob(function(blob) {
+        canvas.toBlob(function (blob) {
             var blobUrl = URL.createObjectURL(blob);
             downloadURI(blobUrl, "zmanim.png");
-            
+
             // Clean up the temporary URL object from browser memory
             setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
         }, "image/png");
