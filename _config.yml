@@ -22,7 +22,7 @@ author: אהל תפילה
 navbar-links:
   זמני תפילות: "https://dashboard.ohel-tefilla.org/"
   קבוצות ווטסאפ:
-    - קבוצת המניין: "https://chat.whatsapp.com/LqAKwn8nHdq4OXry1o7ojr"
+    - קבוצת המניין: "https://chat.whatsapp.com/G9UpKMdA5Hy59h3QxcIsi2"
     - נשות אהל תפילה: "https://chat.whatsapp.com/CykrfeqjfJ72GjSQDIAghu"
   תרומות:
     - להוראת קבע ותרומות באשראי: "https://pe4ch.com/ref/Vakh9XgV2che?lang=he"
@@ -53,7 +53,7 @@ title-img: "/assets/img/logo.png"
 # Uncomment the links you want to show and add your information to each one.
 social-network-links:
   email: "info@ohel-tfilla.org"
-  whatsapp: "https://chat.whatsapp.com/LqAKwn8nHdq4OXry1o7ojr"
+  whatsapp: "https://chat.whatsapp.com/G9UpKMdA5Hy59h3QxcIsi2"
 #  rss: true  # remove this line if you don't want to show an RSS link at the bottom
 #  facebook: deanattali
 #  github: daattali
